@@ -1,0 +1,134 @@
+name: fast_creation_master
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 9.0.23+260812001
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  get: ^4.7.0
+  cupertino_icons: ^1.0.6
+  flutter_screenutil: ^5.9.3
+  waterfall_flow: ^3.0.3
+  cached_network_image: ^3.3.1
+  flutter_keyboard_visibility: ^6.0.0
+  flutter_slidable: ^3.1.2
+  wechat_kit: ^6.0.1
+  package_info_plus: ^4.2.0
+  tuple: ^2.0.2
+  device_info_plus: ^10.1.2
+  sp_util: ^2.0.3
+  bot_toast: ^4.1.3
+  easy_refresh: ^3.4.0
+  alipay_kit: ^6.0.0
+  url_launcher: ^6.3.0
+  carousel_slider: ^5.1.1
+  flutter_native_splash: ^2.3.2
+  flutter_launcher_icons: ^0.13.1
+  #违禁词首字母替换
+  lpinyin: ^2.0.3
+  flutter_markdown: ^0.7.0  
+  markdown: ^7.0.0         # 解析器
+  provider: ^6.1.2
+  web_socket_channel: ^3.0.0  #长链接
+  loading_indicator: ^3.1.1  #loading
+  skeletonizer: ^2.1.0  #骨架预览
+  share_plus: ^11.0.0
+  flutter_widget_from_html: ^0.17.0
+  connectivity_plus: ^6.1.0
+  in_app_purchase: 3.2.0
+  app_tracking_transparency: ^2.0.6+1
+  umeng_common_sdk: ^1.3.0
+  flutter_bugly: ^1.1.1
+  svgaplayer_flutter: ^2.0.0
+  fk_user_agent: ^2.1.0
+  open_filex: ^4.5.0
+  in_app_review: 2.0.9 #app评分
+
+  shanyan:
+    git:
+      url: https://gitee.com/chuanglan253/CLShanYan_Flutter.git
+      path: shanyan
+      ref: v2.3.4.9
+
+  byhy_app_common_utils:
+    path: ../ByHyAppCommonUtils/byhy_app_common_utils
+
+  bda_signal:
+    path: ../ByHyAppCommonUtils/bda_signal
+
+  carousel_slider_plus: ^7.1.1
+  qr_flutter: ^4.1.0
+  widgets_to_image: ^2.0.0
+  image_gallery_saver_plus: ^4.0.0
+  flutter_spinkit: 5.2.1
+
+  flutter_image_compress: ^2.4.0
+  flutter_swiper_view: ^1.1.8
+  connection_network_type: ^1.0.0
+
+
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+dependency_overrides:
+  http: ^1.0.0
+  audioplayers_android: 5.0.2
+  flutter_spinkit: 5.2.1
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/global/launch/
+    - assets/global/common/
+    - assets/global/login/
+    - assets/global/tab/
+    - assets/home/
+    - assets/home/main/
+    - assets/home/tool/
+    - assets/home/folkstory/
+    - assets/home/novel/
+    - assets/profile/
+    - assets/profile/member/
+    - assets/square/
+    - assets/
+    - assets/markdown.txt
+    - assets/business/
+    - assets/home/share_sales/
+    - assets/home/commercialize/
+    - assets/home/shareEarn/
+
+  
+  fonts:
+    - family: AlimamaShuHeiTi  # 自定义字体名称
+      fonts:
+        - asset: fonts/AlimamaShuHeiTi-Bold.ttf    # 粗体字重
+          weight: 700
+  
+wechat_kit:
+  app_id: wxa5307a7d6724b57a
+  universal_link: https://inchat.beiyinapp.com/app/
+
+alipay_kit:
+  scheme: alipaywxe1d9879ec1c96d2b # scheme 不能为纯数字，推荐：alipay${appId}
+
+
+flutter_launcher_icons:
+  image_path: "assets/icon.png"  # 原始图标路径
+  android: false  # 生成 Android 图标
+  ios: 
+    enabled: true
+    icon_name: "AppIcon"  # 生成 iOS 图标flutter pub run flutter_launcher_icons:main

@@ -1,0 +1,67 @@
+apply from: 'versions.gradle'
+apply from: 'pro.gradle'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral() // add repository
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://repo1.maven.org/maven2/' }
+
+        maven { url 'https://artifact.bytedance.com/repository/Volcengine/' }
+        maven { url 'https://developer.huawei.com/repo/' }
+        maven { url 'https://developer.hihonor.com/repo' }
+    }
+
+//    dependencies {
+//        classpath 'com.github.kezong:fat-aar:1.3.8'
+//    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://repo1.maven.org/maven2/' }
+
+        maven { url 'https://artifact.bytedance.com/repository/Volcengine/' }
+        maven { url 'https://developer.huawei.com/repo/' }
+        maven { url 'https://developer.hihonor.com/repo' }
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+// 确保第三方库（如 fk_user_agent）使用足够高的 compileSdk，避免 android:attr/lStar 缺失
+subprojects { project ->
+    afterEvaluate {
+        if (project.name == "fk_user_agent" && project.hasProperty("android")) {
+            android {
+                compileSdkVersion 34
+            }
+        }
+    }
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

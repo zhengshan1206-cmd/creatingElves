@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#0F0F12"  # 背景颜色
+  image: "assets/global/launch/launch_bg.png"  # 启动图图片路径
+  android: true  # 生成 Android 启动图
+  ios: false  # 生成 iOS 启动图
+  web: false  # 不生成 Web 启动图（如需可设置为 true）
+  android_12:
+    image: "assets/global/launch/launch_bg.png"
+  # 其他可选配置（如图片位置、透明度等）
