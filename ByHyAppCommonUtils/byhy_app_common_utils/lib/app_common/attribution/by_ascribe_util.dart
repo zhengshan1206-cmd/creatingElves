@@ -12,7 +12,7 @@ class ByAscribeUtil {
   static int oceanengineState = 0;
   static List<Map<String, dynamic>> oceanengineEventList = [];
   //初始化
-  static Future<dynamic> iniBDConvert() async {
+  static Future<void> iniBDConvert() async {
     dynamic r;
     if (Platform.isAndroid) {
       r = await ChannelOperate.initAppConfig("791231", "channel");
@@ -24,7 +24,6 @@ class ByAscribeUtil {
       }
       oceanengineEventList = [];
     }
-    return r;
   }
 
   /**

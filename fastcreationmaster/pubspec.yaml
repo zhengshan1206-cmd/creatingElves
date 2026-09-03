@@ -1,7 +1,7 @@
 name: fast_creation_master
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 9.0.23+260812001
+version: 9.0.22+260625001
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -49,6 +49,8 @@ dependencies:
   fk_user_agent: ^2.1.0
   open_filex: ^4.5.0
   in_app_review: 2.0.9 #app评分
+  android_id: ^0.4.0
+  android_cn_oaid: ^0.0.1
 
   shanyan:
     git:

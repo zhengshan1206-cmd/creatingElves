@@ -2,7 +2,7 @@
  * @Author: cold-x
  * @Date: 2025-05-28 14:55:08
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-02-24 18:27:48
+ * @LastEditTime: 2026-06-04 18:13:11
  * @FilePath: /fastcreationmaster/lib/square/square.dart
  * @Description: 
  */
@@ -325,7 +325,7 @@ class SquarePage extends StatelessWidget {
                     SizedBox(
                       width: 10.w,
                     ),
-                    InkResponse(
+                    Obx(() => userController.userInfoBean.value?.isVip == 1 ? InkResponse(
                       onTap: () {
                         // Get.dialog(AddWechatDialog(
                         //   wechatUrl: bean.wechat,
@@ -346,20 +346,20 @@ class SquarePage extends StatelessWidget {
                         width: 68.w,
                         height: 22.h,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Color(0XFF98FC4A)),
+                          border: Border.all(color: const Color(0XFF98FC4A)),
                           borderRadius: BorderRadius.circular(15.w),
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "添加老师",
+                          "咨询",
                           style: TextStyle(
-                            color: Color(0XFF98FC4A),
+                            color: const Color(0XFF98FC4A),
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
                       ),
-                    )
+                    ) : const SizedBox.shrink())
                   ],
                 )
               ],
@@ -565,7 +565,7 @@ class SquarePage extends StatelessWidget {
 
             ///赚钱
             if (Platform.isAndroid)
-              Positioned(
+              Obx(() => _controller.userInfo?.isVip == 1 ? Positioned(
                 right: 12,
                 top: 12 + ByScreenUtils.topSafeHeight,
                 child: SizedBox(
@@ -589,7 +589,7 @@ class SquarePage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
+              ) : const SizedBox.shrink()),
           ],
         ),
       ),

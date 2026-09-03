@@ -239,7 +239,8 @@ class StrategyListItemEx extends StatelessWidget {
                       SizedBox(
                         width: 10.w,
                       ),
-                      InkResponse(
+                      
+                      Obx(() => Get.find<UserController>().userInfoBean.value?.isVip == 1 ? InkResponse(
                         onTap: () {
                           // Get.dialog(AddWechatDialog(
                           //   wechatUrl: strategy.wechat,
@@ -267,7 +268,7 @@ class StrategyListItemEx extends StatelessWidget {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "添加老师",
+                            "咨询",
                             style: TextStyle(
                               color: Color(0XFF98FC4A),
                               fontSize: 12.sp,
@@ -275,7 +276,7 @@ class StrategyListItemEx extends StatelessWidget {
                             ),
                           ),
                         ),
-                      )
+                      ) : const SizedBox.shrink())
                     ],
                   )
                 ],

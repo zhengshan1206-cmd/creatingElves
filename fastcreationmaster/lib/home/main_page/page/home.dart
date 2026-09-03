@@ -2,7 +2,7 @@
  * @Author: cold-x
  * @Date: 2025-05-28 14:52:08
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-01-29 16:52:34
+ * @LastEditTime: 2026-06-09 16:04:35
  * @FilePath: /fastcreationmaster/lib/home/main_page/page/home.dart
  * @Description: 
  */
@@ -175,8 +175,8 @@ class HomePage extends BasePage {
 
           Obx(() {
             final bool showSecond = controller.showSecondDialog();
-            final bool halfPriceWordCount =
-                controller.halfPriceWordCountPackage.value;
+            // final bool halfPriceWordCount =
+            //     controller.halfPriceWordCountPackage.value;
             bool showOrderNotPay = controller.showOrderNotPay.value;
             if (showOrderNotPay) {
               return SizedBox();
@@ -250,7 +250,7 @@ class HomePage extends BasePage {
 
           ///半价弹窗
           Obx(() {
-            bool showHalfPrice = controller.halfPriceWordCountPackage.value;
+            // bool showHalfPrice = controller.halfPriceWordCountPackage.value;
             bool showOrderNotPay = controller.showOrderNotPay.value;
             if (showOrderNotPay) {
               return SizedBox();
@@ -265,7 +265,7 @@ class HomePage extends BasePage {
 
           ///15分钟未支付订单
           Obx((){
-              bool showOrderNotPay = controller.showOrderNotPay.value;
+              // bool showOrderNotPay = controller.showOrderNotPay.value;
               return Positioned(child: _showOrderNotPay(),
                   left: 0,
                   right: 0,
@@ -395,49 +395,54 @@ class HomePage extends BasePage {
               child: Stack(
                 children: [
                   Image.asset(
-                    "assets/home/main/icon_home_longnovel_bg${AssetConst.springFestival()}.png",
+                    "assets/home/main/icon_home_longnovel_bg_1.png",
                     width: 169.w,
                     height: 146.w,
                   ),
-                  Container(
-                      padding: EdgeInsets.only(top: 12.w, left: 12.w),
-                      child: ByWidgetsUtil.commonText(
-                          text: '长文小说',
-                          fontFamily: 'AlimamaShuHeiTi',
-                          fontSize: 18.sp)),
-                  Container(
-                      padding: EdgeInsets.only(top: 41.w, left: 12.w),
-                      child: ByWidgetsUtil.commonText(
-                          text: '日更10万字', fontSize: 12.sp)),
-                  Padding(
-                    padding: EdgeInsets.only(top: 102.w, left: 12.w),
-                    child: Container(
-                        width: 88.w,
-                        height: 28.w,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14.w)),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            ByWidgetsUtil.commonText(
-                                text: '开始创作',
-                                textColor: AssetConst.springFestival().isEmpty ? const Color(0xFF7BB109) : ByColorUtil.colorG5,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600),
-                            SizedBox(
-                              width: 4.w,
-                            ),
-                            Image.asset(
-                              "assets/home/main/icon_home_banner_detail_green${AssetConst.springFestival()}.png",
-                              width: 8.w,
-                              height: 8.w,
-                            ),
-                          ],
-                        )),
-                  ),
+                  // Image.asset(
+                  //   "assets/home/main/icon_home_longnovel_bg${AssetConst.springFestival()}.png",
+                  //   width: 169.w,
+                  //   height: 146.w,
+                  // ),
+                  // Container(
+                  //     padding: EdgeInsets.only(top: 12.w, left: 12.w),
+                  //     child: ByWidgetsUtil.commonText(
+                  //         text: '长文小说',
+                  //         fontFamily: 'AlimamaShuHeiTi',
+                  //         fontSize: 18.sp)),
+                  // Container(
+                  //     padding: EdgeInsets.only(top: 41.w, left: 12.w),
+                  //     child: ByWidgetsUtil.commonText(
+                  //         text: '日更10万字', fontSize: 12.sp)),
+                  // Padding(
+                  //   padding: EdgeInsets.only(top: 102.w, left: 12.w),
+                  //   child: Container(
+                  //       width: 88.w,
+                  //       height: 28.w,
+                  //       decoration: BoxDecoration(
+                  //           color: Colors.white,
+                  //           borderRadius: BorderRadius.circular(14.w)),
+                  //       child: Row(
+                  //         children: [
+                  //           SizedBox(
+                  //             width: 10.w,
+                  //           ),
+                  //           ByWidgetsUtil.commonText(
+                  //               text: '开始创作',
+                  //               textColor: AssetConst.springFestival().isEmpty ? const Color(0xFF7BB109) : ByColorUtil.colorG5,
+                  //               fontSize: 14.sp,
+                  //               fontWeight: FontWeight.w600),
+                  //           SizedBox(
+                  //             width: 4.w,
+                  //           ),
+                  //           Image.asset(
+                  //             "assets/home/main/icon_home_banner_detail_green${AssetConst.springFestival()}.png",
+                  //             width: 8.w,
+                  //             height: 8.w,
+                  //           ),
+                  //         ],
+                  //       )),
+                  // ),
                 ],
               ),
             ),

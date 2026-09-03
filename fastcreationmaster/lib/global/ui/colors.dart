@@ -59,6 +59,8 @@ class ByColorUtil {
 
   static const colorF8 = Color(0xFF191B1D);
 
+  static const colorF9 = Color(0xFF4C321E);
+
   ///说明文字/禁用文字
 
   /*

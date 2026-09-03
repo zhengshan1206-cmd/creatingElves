@@ -2,13 +2,14 @@
  * @Author: cold-x
  * @Date: 2025-06-09 11:11:43
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-01-27 15:36:55
+ * @LastEditTime: 2026-06-09 16:00:47
  * @FilePath: /fastcreationmaster/lib/core/util/by_device_info_utils.dart
  * @Description: 
  */
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:android_cn_oaid/android_cn_oaid.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:bda_signal/bda_signal.dart';
 import 'package:connection_network_type/connection_network_type.dart';
@@ -36,10 +37,44 @@ class ByDeviceInfoUtils {
         final AndroidDeviceInfo info = await DeviceInfoPlugin().androidInfo;
         androidId = info.id;
       }
+      if(androidId.isEmpty || isEmptyOrSameChar(androidId)) {
+        androidId = oaid;
+        if(androidId.isEmpty || isEmptyOrSameChar(androidId)) {
+          androidId = await deviceIdentifier();
+        }
+      }
+      if(androidId.isEmpty && data != null) {
+        androidId = data["androidId"];
+      }
       return Tuple2(oaid, androidId);
     }
     final IosDeviceInfo info = await DeviceInfoPlugin().iosInfo;
     return Tuple2("", info.identifierForVendor ?? "");
+  }
+
+  static bool isEmptyOrSameChar(String text) {
+    return RegExp(r'^(.)\1*$').hasMatch(text.replaceAll('-', ''));
+  }
+
+  /// 获取其他设备标识
+  static Future<String> deviceIdentifier() async {
+    final plugin = AndroidCnOaid();
+    await plugin.register();
+    final supported = await plugin.isSupported();
+    if (!supported) {
+      return '';
+    }
+    String id = '';
+    try {
+      id = await plugin.getOAIDByManufacturer() ?? '';
+      if(id.isEmpty || isEmptyOrSameChar(id)) {
+        id = await plugin.getPseudoID();
+      }
+      return id;
+    } on OaidException catch (e) {
+      id = '';
+    }
+    return id;
   }
 
   static Future<dynamic> getUserDiviceInfo() async {

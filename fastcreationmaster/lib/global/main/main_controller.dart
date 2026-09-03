@@ -2,7 +2,7 @@
  * @Author: cold-x
  * @Date: 2025-05-28 14:51:03
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-02-25 18:54:50
+ * @LastEditTime: 2026-06-04 18:12:15
  * @FilePath: /fastcreationmaster/lib/global/main/main_controller.dart
  * @Description: 
  */
@@ -16,7 +16,6 @@ import 'package:fast_creation_master/global/other/novel_words/controller/words_c
 import 'package:fast_creation_master/home/main_page/controller/home_controller.dart';
 import 'package:fast_creation_master/profile/profile.dart';
 import 'package:fast_creation_master/profile/profile_controller.dart';
-import 'package:fast_creation_master/square/add_wechat_dialog.dart';
 import 'package:fast_creation_master/square/square.dart';
 import 'package:fast_creation_master/square/zone/controller/square_controller.dart';
 import 'package:get/get.dart';
@@ -134,19 +133,6 @@ class MainController extends GetxController {
       );
       if (!Get.find<SquareController>().isShowGuideDialog) {
         Get.find<SquareController>().showGuideDialog();
-      }
-      if (userController.strategyAddVUrl.isNotEmpty &&
-          userController.userInfoBean.value?.isVip == 1) {
-            
-        Get.dialog(AddWechatDialog(
-          wechatUrl: userController.strategyAddVUrl,
-        ));
-        EventTracking.reportDataPoint(
-          pageTag: 'guide_page_add_teacher_dialog',
-          operateType: 'view',
-          funcDetailImg: '',
-          funcDetailTag: '',
-        );
       }
     }
     if (index == 2) {

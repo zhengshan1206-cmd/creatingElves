@@ -2,13 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:byhy_app_common_utils/app_common/aes/byhy_aes_storage_utils.dart';
 import 'package:byhy_app_common_utils/app_common/by_common_utils.dart';
 import 'package:byhy_app_common_utils/app_common/by_nav_router_utils.dart';
-import 'package:byhy_app_common_utils/app_common/consts/build_config.dart';
 import 'package:byhy_app_common_utils/app_common/event/common_event.dart';
 import 'package:byhy_app_common_utils/app_http/apis.dart';
-import 'package:byhy_app_common_utils/app_http/channel.dart';
 import 'package:byhy_app_common_utils/app_http/http_utils.dart';
 import 'package:byhy_app_common_utils/app_purchase/ios_purchase/ios_buy_engine.dart';
 import 'package:byhy_app_common_utils/app_purchase/wechat_buy_engine/ali_pay_order_bean.dart';
@@ -22,11 +19,9 @@ import 'package:fast_creation_master/global/launch/controller/launch_controller.
 import 'package:fast_creation_master/global/other/event_tracking/event_tracking.dart';
 import 'package:fast_creation_master/global/routes/app_pages.dart';
 import 'package:fast_creation_master/home/first_create/fake_chapter_list_view.dart';
-import 'package:fast_creation_master/home/main_page/controller/home_controller.dart';
 import 'package:fast_creation_master/profile/member/beans/vip_type_bean.dart';
 import 'package:fast_creation_master/profile/member/dialog/confirm_dialog.dart';
 import 'package:fast_creation_master/profile/member/dialog/member_agree_dialog.dart';
-import 'package:fast_creation_master/profile/member/dialog/member_retain_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -36,10 +31,10 @@ import 'package:alipay_kit/alipay_kit_platform_interface.dart';
 
 import '../../../core/network/novel_apis.dart';
 import '../../../core/service/data_service.dart';
-import '../../../global/const/const.dart';
 import '../../../global/login/controller/onekey_manager.dart';
 import '../../../home/share_sales/reward/reward_controller.dart';
 import '../../../square/add_wechat_dialog.dart';
+import '../beans/pop_config_bean.dart';
 import '../widget/not_pay_order_widget.dart';
 import 'member_pay_success_controller.dart';
 import 'pay_style_manager.dart';
@@ -109,6 +104,9 @@ class MemberCenterController extends GetxController
   ///返回拦截弹窗次数
   int interceptCount = 0;
 
+  ///是否显示拦截弹窗
+  RxBool showRetainDialog = false.obs;
+
   ///付费页样式管理器
   late PayStyleManager styleManager;
 
@@ -142,6 +140,10 @@ class MemberCenterController extends GetxController
   int? payScreenType; // 0: 横屏, 1: 竖屏
   ///付费页样式类型
   int? payPageStyle; 
+
+  /// 支付拦截弹窗数据
+  RxList<PopConfigBean> popConfigList = <PopConfigBean>[].obs;
+
 
   /// 埋点相关
   final landingPage = Get.find<LaunchController>().launchInfo?.verConfig.landingPage ?? '';
@@ -194,6 +196,8 @@ class MemberCenterController extends GetxController
         });
       });
     }
+
+    _fetchInterceptSetting();
   }
 
 
@@ -230,6 +234,47 @@ class MemberCenterController extends GetxController
       loadVipHappys();
     }
   }
+  /// 获取拦截弹窗设置
+  void _fetchInterceptSetting() {
+    HttpUtils.post(
+      NovelApis.getInterceptSetting,
+      {},
+      success: (data) {
+        Get.log("获取拦截弹窗设置 $data");
+        final config = data["data"]["item"];
+        if (config != null && config is List) {
+          popConfigList.clear();
+          popConfigList.addAll(config.map((e) => PopConfigBean.fromJson(e)));
+        }
+        if(popConfigList.isNotEmpty) {
+          PopConfigBean bean = popConfigList.first;
+          fetchNextPopConfig(bean);
+        }
+      },
+      fail: (code, msg) {},
+    );
+  }
+
+  /// 根据ID获取拦截弹窗配置
+  void fetchNextPopConfig(PopConfigBean bean) {
+    if (bean.closeBtnType == '2' && bean.popUpId > 0) {
+      HttpUtils.post(
+        NovelApis.getPopConfigById,
+        {
+          "id": bean.popUpId,
+        },
+        success: (data) {
+          final Map<String, dynamic> config = data["data"] ?? {};
+          if (config.isNotEmpty) {
+            popConfigList.add(PopConfigBean.fromJson(config));
+          }
+        },
+        fail: (code, msg) {},
+      );
+    }
+  }
+
+
 
   ///获取VIP权益列表
   loadVipHappys({
@@ -391,10 +436,10 @@ class MemberCenterController extends GetxController
 
   /// 协议是否阅读
   void agreementCheckedChanged(bool value) {
-    if(Get.find<UserController>().isAudit()) {
+    // if(Get.find<UserController>().isAudit()) {
       agreementChecked.value = value;
       update();
-    }
+    // }
   }
 
   /// 获取套餐按钮文案
@@ -452,9 +497,17 @@ class MemberCenterController extends GetxController
         operateType: '',
         funcDetailTag: landingPage,
         funcDetailImg: '',
-        extra: {'pay_page_id': pagePageID, 'vip_id': getPackageID(), 'pay_type': (isRetainPay.value || isSecondRetainPay.value) ? 1 : 2});
+        extra: {'pay_page_id': pagePageID, 'vip_id': getPackageID(), 'pay_type2': (isRetainPay.value || isSecondRetainPay.value) ? 2 : 1});
+    
+    /// 延迟1s获取是否有拦截弹窗数据
+    Future.delayed(const Duration(seconds: 2), () {
+      if (tabCurrentIndex.value == 0 && popConfigList.isEmpty) {
+        _fetchInterceptSetting();
+      }
+    });
+
     if (isRetainPay.value || isSecondRetainPay.value) {
-      List<VipTypeBean> vipList = isSecondRetainPay.value ? payData.vipInterceptList : newVipList;
+      List<VipTypeBean> vipList = isSecondRetainPay.value ? popConfigList[0].vipInfo : newVipList;
       if (tabCurrentIndex.value == 0) {
         if(vipList.isEmpty) {
           isRetainPay.value = false;
@@ -549,6 +602,7 @@ class MemberCenterController extends GetxController
         loadingText.value = "订单处理中...";
       },
     );
+    
   }
 
   ///vip订单查询
@@ -788,9 +842,6 @@ class MemberCenterController extends GetxController
         },
         onFailure: () {
           Get.log("支付失败或取消");
-          if(tabCurrentIndex.value == 0){
-            showRetainDialog(true);
-          }
           isLoading.value = false;
         },
         onError: () {
@@ -811,9 +862,6 @@ class MemberCenterController extends GetxController
           }
         },
         onFailure: () {
-          if(tabCurrentIndex.value == 0){
-            showRetainDialog(true);
-          }
           Get.log("支付失败或取消");
           isLoading.value = false;
         },
@@ -834,22 +882,8 @@ class MemberCenterController extends GetxController
       });
       _iosBuyStreamSubscription =
           eventBus.on<IosProductBuySuccessEvent>().listen((e) {
-        print('__________iOS监听订单');
         closePageAndJumpToSuccessPage();
       });
-    }
-  }
-
-  ///展示挽留弹窗
-  Future<void> showRetainDialog(bool isFailed) async {
-    final result = await Get.dialog<dynamic>(
-      const MemberRetainDialog(
-        type: MemberRetainType.payFailed_9_0_1,
-      ),
-    );
-    if (result == "true") {
-      isRetainPay.value = true;
-      packageBuy();
     }
   }
 
@@ -861,7 +895,7 @@ class MemberCenterController extends GetxController
         operateType: '',
         funcDetailTag: landingPage,
         funcDetailImg: '',
-        extra: {'pay_page_id': pagePageID, 'vip_id': getPackageID(), 'pay_type': (isRetainPay.value || isSecondRetainPay.value) ? 1 : 2});
+        extra: {'pay_page_id': pagePageID, 'vip_id': getPackageID(), 'pay_type2': (isRetainPay.value || isSecondRetainPay.value) ? 2 : 1});
     eventBus.fire(const RefreshFakeChapter());
     /// 充值成功更新用户信息
     Get.find<UserController>().reloadUserInfo(
@@ -955,7 +989,7 @@ class MemberCenterController extends GetxController
     }
 
     ///vip直接退出付费页
-    if (userInfo.value?.isVip == 1 || BuildConfig.instance.channelType == ChannelType.huawei) {
+    if (userInfo.value?.isVip == 1) {
       closeAndBack();
     } else {
       ///非vip字数包返回
@@ -963,78 +997,42 @@ class MemberCenterController extends GetxController
         Get.back();
         return;
       }
-      if(interceptCount >= 2) {
+      if (popConfigList.isEmpty || popConfigList[0].vipInfo.isEmpty) {
         closeAndBack();
         return;
       }
-      EventTracking.reportDataPoint(
-        pageTag: 'member_page_retention_dialog',
-        operateType: 'view',
-        funcDetailTag: landingPage,
-        funcDetailImg: '',
-        extra: {'pay_page_id': pagePageID, 'vip_id': getPackageID(),});
-      final result = interceptCount == 0 ? 
-        await Get.bottomSheet(const MemberRetainDialog(type: MemberRetainType.cancelPay_9_0_6,),
-          isDismissible: false,
-          isScrollControlled: true,
-          enableDrag: false
-        ) : 
-        await Get.dialog<dynamic>(const MemberRetainDialog(type: MemberRetainType.cancelPaySecond_9_0_2,),
-          barrierDismissible: false,
-        );
-      if (result == "true") {
-        if(interceptCount == 0) {
-          isRetainPay.value = true;
-        }
-        else {
-          isSecondRetainPay.value = true;
-        }
-        interceptCount ++;
-        packageBuy();
-      } else if (result == "break") {
-
-      } else {
-        if(showSKUDialog!){
-          showSKUDialog = false;
-          interceptCount ++;
-          return;
-        }
-        final int hasCache = ByStorageUtils.getInt(Consts.kCancelPaySecondTime) ?? 0;
-        ///超级配置中无挽留弹窗
-        if(Get.find<UserController>().paybackURL.isEmpty) {
-          closeAndBack();
-          return;
-        }
-        ///二次挽留弹窗已经超时
-        if (hasCache > 0) {
-          final int timeDiff = DateTime.now().millisecondsSinceEpoch -
-              hasCache -
-              Consts.kCancelPaySecondTimeDuration;
-          if (timeDiff >= 0) {
-            closeAndBack();
-            return;
-          }
-        } 
-        ///二次弹窗关闭
-        if(interceptCount > 0) {
-          ///第一次关闭时存储
-          if(hasCache == 0) {
-            final int time = DateTime.now().millisecondsSinceEpoch;
-            ByStorageUtils.saveInt(Consts.kCancelPaySecondTime, time);
-          }
-          final bool isRegister = Get.isRegistered<HomeController>();
-          if(isRegister) {
-            final HomeController home = Get.find<HomeController>();
-            ///当前无弹窗，并且用户没有手动关闭时修改值
-            if(home.showCancelPaySecondTime.value == 0) {
-              home.showCancelPaySecondTime.value = 1;
-            }
-          }
-          closeAndBack();
-        }
-      }
+      showRetainDialog.value = true;
       interceptCount ++;
     }
+  }
+
+  void closeRetainDialog() {
+    showRetainDialog.value = false;
+    fetchNextPopConfig(popConfigList.first);
+    if(!Get.find<UserController>().isAudit()){
+      agreementCheckedChanged(true);
+    }
+    popConfigList.removeAt(0);
+    EventTracking.reportDataPoint(
+        pageTag: 'member_page_retention_close_btn',
+        operateType: 'click',
+        funcDetailTag: landingPage,
+        funcDetailImg: '',
+        extra: {
+          'pay_page_id': pagePageID,
+          'vip_id': getPackageID(),
+        });
+  }
+
+  /// 返回拦截支付
+  void retainPayStart() {
+    if (interceptCount == 0) {
+      isRetainPay.value = true;
+    } else {
+      isSecondRetainPay.value = true;
+    }
+    interceptCount++;
+    packageBuy();
   }
 
   ///关闭返回

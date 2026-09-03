@@ -2,7 +2,7 @@
  * @Author: cold-x
  * @Date: 2025-06-16 20:30:05
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-03-02 15:20:21
+ * @LastEditTime: 2026-06-23 17:43:15
  * @FilePath: /fastcreationmaster/lib/home/long_novel/page/novel_brief_page.dart
  * @Description: 灵感生成页面
  */
@@ -27,6 +27,7 @@ import '../../../core/controller/base_record_controller.dart';
 import '../../../core/controller/user_controller.dart';
 import '../../../core/service/data_service.dart';
 import '../../../core/widget/view/progress_view.dart';
+import '../../../global/launch/view/finger_scale_animate_view.dart';
 import '../../../global/other/event_tracking/event_tracking.dart';
 import '../../../global/routes/app_pages.dart';
 import '../../../global/ui/colors.dart';
@@ -68,15 +69,14 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
           operateType: 'view',
           funcDetailImg: '',
           funcDetailTag: provider.novelID.toString(),
-          extra: {'source': 2}
-        );
+          extra: {'source': 2});
 
       /// 更新归因信息
       if (provider.source == NovelHomeSourceType.guide) {
         Future.delayed(const Duration(seconds: 2), () {
           Get.find<UserController>().reloadUserInfo(reloadUse: false);
         });
-    }
+      }
     } else {
       provider.fetchNovelDetail(provider.novelID!);
       DataService.onEvent('novel_brief', {
@@ -179,8 +179,7 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
   Widget buildBody(BuildContext context) {
     return Consumer<BriefDetailProvider>(
       builder: (context, provider, child) {
-
-       bool couldTry =  Get.find<UserController>().couldTry;
+        bool couldTry = Get.find<UserController>().couldTry;
         return PopScope(
           canPop: provider.source != NovelHomeSourceType.guide,
           child: Stack(
@@ -287,6 +286,12 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
                                         },
                                       )
                                     : Container(),
+                        SizedBox(
+                          height: !provider.isGenerating &&
+                                  provider.source == NovelHomeSourceType.guide
+                              ? 30.w + ByScreenUtils.bottomSafeHeight
+                              : 0,
+                        )
                       ],
                     ),
                   ),
@@ -346,11 +351,11 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
                   provider.source == NovelHomeSourceType.guide &&
                   provider.content.isNotEmpty)
                 Positioned(
-                    bottom: 56.w + ByScreenUtils.bottomSafeHeight,
+                    bottom: 56.w + ByScreenUtils.bottomSafeHeight + 30.w,
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: 308.w,
+                      height: 312.w,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                             begin: Alignment.topCenter,
@@ -377,27 +382,31 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
                           SizedBox(
                             height: 12.w,
                           ),
-                          RichText(
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                                style: TextStyle(
-                                  fontFamily: 'AlimamaShuHeiTi',
-                                  fontSize: 20.sp,
-                                ),
-                                children: const [
-                                  TextSpan(
-                                    text: '哇~Ai已经帮你写好超棒创意!\n 下一步',
-                                    style:
-                                        TextStyle(color: ByColorUtil.colorF1),
-                                  ),
-                                  TextSpan(
-                                    text: '写小说赚钱',
-                                    style:
-                                        TextStyle(color: ByColorUtil.colorG4),
-                                  ),
-                                ]),
+                          Image.asset(
+                            'assets/business/icon_guide_brief_tips.png',
+                            height: 74.w,
                           ),
+                          // RichText(
+                          //   maxLines: 2,
+                          //   textAlign: TextAlign.center,
+                          //   text: TextSpan(
+                          //       style: TextStyle(
+                          //         fontFamily: 'AlimamaShuHeiTi',
+                          //         fontSize: 20.sp,
+                          //       ),
+                          //       children: const [
+                          //         TextSpan(
+                          //           text: '哇~Ai已经帮你写好超棒创意!\n 下一步',
+                          //           style:
+                          //               TextStyle(color: ByColorUtil.colorF1),
+                          //         ),
+                          //         TextSpan(
+                          //           text: '写小说赚钱',
+                          //           style:
+                          //               TextStyle(color: ByColorUtil.colorG4),
+                          //         ),
+                          //       ]),
+                          // ),
                           SizedBox(
                             height: 12.w,
                           ),
@@ -419,10 +428,18 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
 
               if (couldTry &&
                   (provider.source != NovelHomeSourceType.guide) &&
-                  (provider.type == CreationType.novel || provider.type== CreationType.shortNovel))
+                  (provider.type == CreationType.novel ||
+                      provider.type == CreationType.shortNovel))
                 const Positioned(
                   bottom: 0,
                   child: FakeProgressView(),
+                ),
+              if (provider.source == NovelHomeSourceType.guide &&
+                  !provider.isGenerating)
+                Positioned(
+                  right: 12.w,
+                  bottom: ByScreenUtils.bottomSafeHeight - 5.w,
+                  child: const FingerScaleAnimateView(),
                 )
             ],
           ),
@@ -560,45 +577,45 @@ class _NovelBriefPageState extends State<NovelBriefPage> {
   Widget _buildGuideBottomView() {
     final provider = context.read<BriefDetailProvider>();
     return BottomView(
-      nextBtnText: '我要写小说赚钱',
+      nextBtnText: '继续写正文',
       checkLogin: false,
+
       ///引导页或者生成大纲后不显示字数
       showWords: false,
       nextStep: () {
         EventTracking.reportDataPoint(
-                  pageTag: 'accept_writing_money_btn',
-                  operateType: 'click',
-                  funcDetailImg: '',
-                  funcDetailTag: provider.novelID.toString(),
-                  extra: {'source': 2});
+            pageTag: 'accept_writing_money_btn',
+            operateType: 'click',
+            funcDetailImg: '',
+            funcDetailTag: provider.novelID.toString(),
+            extra: {'source': 2});
         final UserController userController = Get.find<UserController>();
 
         /// 审核面先登录
-        if(userController.isAudit()) {
+        if (userController.isAudit()) {
           userController.checkPreLogin(
-            source: 'guide_novel_brief',
-            actionCallback: () {
-              userController.jumpToPayPage(
-                isBackHome: true,
-                source: 'guide_novel_brief',
-                back: () {
-                  ///引导页进入首页
-                  provider.isBackToMain = true;
-                  Get.offAllNamed(Routes.main);
-                },
-              );
-            });
-        }
-        else {
+              source: 'guide_novel_brief',
+              actionCallback: () {
+                userController.jumpToPayPage(
+                  isBackHome: true,
+                  source: 'guide_novel_brief',
+                  back: () {
+                    ///引导页进入首页
+                    provider.isBackToMain = true;
+                    Get.offAllNamed(Routes.main);
+                  },
+                );
+              });
+        } else {
           userController.jumpToPayPage(
-                isBackHome: true,
-                source: 'guide_novel_brief',
-                back: () {
-                  ///引导页进入首页
-                  provider.isBackToMain = true;
-                  Get.offAllNamed(Routes.main);
-                },
-              );
+            isBackHome: true,
+            source: 'guide_novel_brief',
+            back: () {
+              ///引导页进入首页
+              provider.isBackToMain = true;
+              Get.offAllNamed(Routes.main);
+            },
+          );
         }
       },
     );

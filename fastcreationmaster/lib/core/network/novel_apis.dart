@@ -1,8 +1,8 @@
 /*
  * @Author: cold-x
  * @Date: 2025-05-30 14:31:38
- * @LastEditors: cold-x 474647591@qq.com
- * @LastEditTime: 2025-08-22 18:07:06
+ * @LastEditors: duncy 474647591@qq.com
+ * @LastEditTime: 2026-06-05 14:53:40
  * @FilePath: /fastcreationmaster/lib/core/network/novel_apis.dart
  * @Description: 
  */
@@ -309,4 +309,10 @@ class NovelApis extends APIs {
 
   ///查询未支付订单相关信息
   static const String getOrderInfoById = "/api/vip/getOrderInfoById";
+
+  /// 获取拦截弹窗设置
+  static const String getInterceptSetting = "api/BlockPopUp/getPopConfig";
+
+  /// 根据ID获取拦截弹窗配置
+  static const String getPopConfigById = "api/BlockPopUp/getPopUpConfigById";
 }

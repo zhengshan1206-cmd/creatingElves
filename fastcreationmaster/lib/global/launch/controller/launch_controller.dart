@@ -27,7 +27,9 @@ typedef LaunchFailCallback = void Function();
 class LaunchController extends GetxController {
   LaunchInfoBean? launchInfo;
 
-  bool isLaunched = false; ///是否加载过启动页
+  bool isLaunched = false;
+
+  ///是否加载过启动页
 
   ///启动页检查
   void checkAgreement() async {
@@ -42,7 +44,6 @@ class LaunchController extends GetxController {
         appLaunch(isFirshLaunch: true);
         launchSuccessful();
       });
-      
     } else {
       showCheckDialog();
     }
@@ -71,7 +72,7 @@ class LaunchController extends GetxController {
   void launchSuccessful() {
     ///网络链路正常后初始化sdk
     InitializeManager.initSDK();
-    
+
     ///是否看过引导页
     final guideChecked =
         ByStorageUtils.getBool(Consts.kLaunchGuideCheck) ?? false;
@@ -103,6 +104,7 @@ class LaunchController extends GetxController {
       "app_version": ByStorageUtils.getString(ConstKeys.kAppVersion) ?? "5.0.0",
       "sys": system,
     };
+
     HttpUtils.request(
       Method.post,
       APIs.launch,
@@ -126,9 +128,10 @@ class LaunchController extends GetxController {
             //   launchSuccessful();
             // }
             isLaunched = true;
+
             /// 回调
             onSuccess?.call(launchInfoBean);
-            if(isFirshLaunch!) {
+            if (isFirshLaunch!) {
               EventTracking.reportDataPoint(
                 pageTag: 'tourist',
                 operateType: 'view',

@@ -82,7 +82,7 @@ class AddWechatDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(22.0.w),
                       ),
                       child: Text(
-                        "添加老师",
+                        "咨询",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.sp,

@@ -19,7 +19,9 @@ import 'package:get/get.dart';
 import 'package:fast_creation_master/profile/member/controller/member_center_controller.dart';
 import '../../../core/controller/user_controller.dart';
 import '../../../global/other/event_tracking/event_tracking.dart';
+import '../beans/pop_config_bean.dart';
 import '../beans/user_info_bean.dart';
+import '../dialog/member_retain_dialog.dart';
 
 // ignore: must_be_immutable
 class PayCenterPageOneEx extends BasePage {
@@ -1118,6 +1120,27 @@ class PayCenterPageOneEx extends BasePage {
               ],
             ),
           ),
+
+          Obx(() {
+            if(controller.popConfigList.isEmpty || !controller.showRetainDialog.value) {
+              return Container();
+            } else {
+              PopConfigBean bean = controller.popConfigList.first;
+              return Container(
+                color: ByColorUtil.colorF8.withValues(alpha: 0.7),
+                child: MemberRetainDialog(
+                  mode: bean.popType == 1 ? 1 : 2,
+                  type: MemberRetainType.createBig_11_0_5,
+                  confirm: () {
+                    controller.retainPayStart();
+                  },
+                  close: () {
+                    controller.closeRetainDialog();
+                  },
+                ),
+              );
+            }
+          }),
           Obx(() {
             if (controller.isLoading.value) {
               return Container(

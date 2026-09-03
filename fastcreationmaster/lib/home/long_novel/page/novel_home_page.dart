@@ -2,7 +2,7 @@
  * @Author: cold-x
  * @Date: 2025-06-12 18:54:22
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-01-28 10:31:05
+ * @LastEditTime: 2026-06-04 17:25:42
  * @FilePath: /fastcreationmaster/lib/home/long_novel/page/novel_home_page.dart
  * @Description: 小说首页页面
  */
@@ -22,6 +22,7 @@ import 'package:get/get.dart';
 import '../../../core/util/by_screen_utils.dart';
 import '../../../core/widget/page/base_page.dart';
 import '../../../core/widget/view/by_button.dart';
+import '../../../global/launch/view/finger_scale_animate_view.dart';
 import '../../../global/other/event_tracking/event_tracking.dart';
 import '../../../global/routes/routes_utils.dart';
 import '../../../global/ui/colors.dart';
@@ -179,192 +180,202 @@ class NovelHomePage extends BasePage {
           action: () {
             controller.fetchLaunchData();
           },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+          child: Stack(
             children: [
-              const Expanded(child: NovelHomeView()),
-              SizedBox(
-                height: 10.w,
-              ),
-              if (controller.novelBean.value?.pauseStatus == 3)
-                SizedBox(
-                  height: 36.w,
-                  child: Center(
-                    child: ByWidgetsUtil.commonText(
-                      text: '当前生成中的内容完成后将断更。',
-                      fontSize: 12,
-                      textColor: ByColorUtil.colorG4,
-                    ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Expanded(child: NovelHomeView()),
+                  SizedBox(
+                    height: 10.w,
                   ),
-                ),
-              Obx(
-                () {
-                  return (controller.novelBean.value == null ||
-                          (controller.novelBean.value!.stage! == 10 &&
-                              controller.source == NovelHomeSourceType.normal))
-                      ? Container()
-                      : Padding(
-                          padding: EdgeInsets.only(
-                              left: 12.w,
-                              right: 12.w,
-                              top:
-                                  controller.source == NovelHomeSourceType.guide
-                                      ? 0
-                                      : 4.w,
-                              bottom: ByScreenUtils.bottomSafeHeight + 4.w),
-                          child: controller.source != NovelHomeSourceType.normal
-                              ? SizedBox(
-                                  height: controller.source ==
-                                          NovelHomeSourceType.guide
-                                      ? 72.w
-                                      : 56.w,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        top: controller.source ==
-                                                NovelHomeSourceType.guide
-                                            ? 18.w
-                                            : 0,
-                                        left: 0,
-                                        right: 0,
-                                        height: 48.w,
-                                        child: ByButton.gradientImageBtn(
-                                            image:
-                                                'assets/home/main/btn_home_write.png',
+                  if (controller.novelBean.value?.pauseStatus == 3)
+                    SizedBox(
+                      height: 36.w,
+                      child: Center(
+                        child: ByWidgetsUtil.commonText(
+                          text: '当前生成中的内容完成后将断更。',
+                          fontSize: 12,
+                          textColor: ByColorUtil.colorG4,
+                        ),
+                      ),
+                    ),
+                  Obx(
+                    () {
+                      return (controller.novelBean.value == null ||
+                              (controller.novelBean.value!.stage! == 10 &&
+                                  controller.source == NovelHomeSourceType.normal))
+                          ? Container()
+                          : Padding(
+                              padding: EdgeInsets.only(
+                                  left: 12.w,
+                                  right: 12.w,
+                                  top:
+                                      controller.source == NovelHomeSourceType.guide
+                                          ? 0
+                                          : 4.w,
+                                  bottom: ByScreenUtils.bottomSafeHeight + 4.w),
+                              child: controller.source != NovelHomeSourceType.normal
+                                  ? SizedBox(
+                                      height: controller.source ==
+                                              NovelHomeSourceType.guide
+                                          ? 72.w
+                                          : 56.w,
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                            top: controller.source ==
+                                                    NovelHomeSourceType.guide
+                                                ? 18.w
+                                                : 0,
+                                            left: 0,
+                                            right: 0,
+                                            height: 48.w,
+                                            child: ByButton.gradientImageBtn(
+                                                image:
+                                                    'assets/home/main/btn_home_write.png',
+                                                fontSize: 17,
+                                                textColor: const Color(0xFF162408),
+                                                title: "写同款",
+                                                imageSize: 24.w,
+                                                fontWeight: FontWeight.w600,
+                                                onClick: () {
+                                                  controller.goWriteSame();
+                                                }),
+                                          ),
+              
+                                          ///底部圆角图标
+                                          if (controller.source ==
+                                                  NovelHomeSourceType.guide &&
+                                              controller.guideNovelBean.value!
+                                                  .bottomPrompt!.isNotEmpty)
+                                            Positioned(
+                                                right: 0.w,
+                                                top: 23.w,
+                                                child: SizedBox(
+                                                  width: 16.w,
+                                                  height: 16.w,
+                                                  child: Image.asset(
+                                                    'assets/home/novel/icon_bottomright_red_16.png',
+                                                    width: 16.w,
+                                                    height: 16.w,
+                                                  ),
+                                                )),
+              
+                                          ///底部平台提示词
+                                          if (controller.source ==
+                                                  NovelHomeSourceType.guide &&
+                                              controller.guideNovelBean.value!
+                                                  .bottomPrompt!.isNotEmpty)
+                                            Positioned(
+                                              right: 0.w,
+                                              top: 0.w,
+                                              child: Container(
+                                                  height: 24.w,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 6.w),
+                                                  decoration: BoxDecoration(
+                                                      gradient:
+                                                          const LinearGradient(
+                                                              colors: [
+                                                            Color(0xFFFE5024),
+                                                            Color(0xFFFF9A81)
+                                                          ]),
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(12.w),
+                                                        bottomLeft:
+                                                            Radius.circular(12.w),
+                                                        topRight:
+                                                            Radius.circular(12.w),
+                                                      )),
+                                                  child: Center(
+                                                    child: ByWidgetsUtil.commonText(
+                                                        text: controller
+                                                                .guideNovelBean
+                                                                .value
+                                                                ?.bottomPrompt ??
+                                                            '',
+                                                        textColor:
+                                                            ByColorUtil.colorF1,
+                                                        fontSize: 11.sp),
+                                                  )),
+                                            ),
+                                        ],
+                                      ),
+                                    )
+                                  : Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // 只在显示继续生成按钮且非会员时显示提示文案
+                                        if (userController
+                                                .userInfoBean.value?.isVip !=
+                                            1)
+                                          _hintTextView(),
+                                        Opacity(
+                                          opacity: controller.novelBean.value
+                                                      ?.pauseStatus ==
+                                                  3
+                                              ? 0.3
+                                              : 1.0,
+                                          child: ByButton.gradientBtn(
+                                            gradient: !controller
+                                                    .canContinueGenerateNovel()
+                                                ? ByColorUtil.colorVIP()
+                                                : ByColorUtil.colorG1(),
                                             fontSize: 17,
                                             textColor: const Color(0xFF162408),
-                                            title: "写同款",
-                                            imageSize: 24.w,
+                                            title: !controller
+                                                    .canContinueGenerateNovel()
+                                                ? "立即充值"
+                                                : '继续生成',
                                             fontWeight: FontWeight.w600,
                                             onClick: () {
-                                              controller.goWriteSame();
-                                            }),
-                                      ),
-
-                                      ///底部圆角图标
-                                      if (controller.source ==
-                                              NovelHomeSourceType.guide &&
-                                          controller.guideNovelBean.value!
-                                              .bottomPrompt!.isNotEmpty)
-                                        Positioned(
-                                            right: 0.w,
-                                            top: 23.w,
-                                            child: SizedBox(
-                                              width: 16.w,
-                                              height: 16.w,
-                                              child: Image.asset(
-                                                'assets/home/novel/icon_bottomright_red_16.png',
-                                                width: 16.w,
-                                                height: 16.w,
-                                              ),
-                                            )),
-
-                                      ///底部平台提示词
-                                      if (controller.source ==
-                                              NovelHomeSourceType.guide &&
-                                          controller.guideNovelBean.value!
-                                              .bottomPrompt!.isNotEmpty)
-                                        Positioned(
-                                          right: 0.w,
-                                          top: 0.w,
-                                          child: Container(
-                                              height: 24.w,
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 6.w),
-                                              decoration: BoxDecoration(
-                                                  gradient:
-                                                      const LinearGradient(
-                                                          colors: [
-                                                        Color(0xFFFE5024),
-                                                        Color(0xFFFF9A81)
-                                                      ]),
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(12.w),
-                                                    bottomLeft:
-                                                        Radius.circular(12.w),
-                                                    topRight:
-                                                        Radius.circular(12.w),
-                                                  )),
-                                              child: Center(
-                                                child: ByWidgetsUtil.commonText(
-                                                    text: controller
-                                                            .guideNovelBean
-                                                            .value
-                                                            ?.bottomPrompt ??
-                                                        '',
-                                                    textColor:
-                                                        ByColorUtil.colorF1,
-                                                    fontSize: 11.sp),
-                                              )),
-                                        ),
-                                    ],
-                                  ),
-                                )
-                              : Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // 只在显示继续生成按钮且非会员时显示提示文案
-                                    if (userController
-                                            .userInfoBean.value?.isVip !=
-                                        1)
-                                      _hintTextView(),
-                                    Opacity(
-                                      opacity: controller.novelBean.value
-                                                  ?.pauseStatus ==
-                                              3
-                                          ? 0.3
-                                          : 1.0,
-                                      child: ByButton.gradientBtn(
-                                        gradient: !controller
-                                                .canContinueGenerateNovel()
-                                            ? ByColorUtil.colorVIP()
-                                            : ByColorUtil.colorG1(),
-                                        fontSize: 17,
-                                        textColor: const Color(0xFF162408),
-                                        title: !controller
-                                                .canContinueGenerateNovel()
-                                            ? "立即充值"
-                                            : '继续生成',
-                                        fontWeight: FontWeight.w600,
-                                        onClick: () {
-                                          userController.checkPreLogin(
-                                            source: 'novel_home',
-                                            actionCallback: () {
-                                              ///字数不够时
-                                              if (!controller
-                                                  .canContinueGenerateNovel()) {
-                                                Get.find<UserController>()
-                                                    .jumpToPayPage(
-                                                  source:
-                                                      'novel_home_words_unable',
-                                                );
-                                              } else {
-                                                ///暂停状态时
-                                                if (controller.novelBean.value!
-                                                        .pauseStatus! ==
-                                                    1) {
-                                                  controller
-                                                      .continuePausedNovel(
-                                                    onSuccess: () {
+                                              userController.checkPreLogin(
+                                                source: 'novel_home',
+                                                actionCallback: () {
+                                                  ///字数不够时
+                                                  if (!controller
+                                                      .canContinueGenerateNovel()) {
+                                                    Get.find<UserController>()
+                                                        .jumpToPayPage(
+                                                      source:
+                                                          'novel_home_words_unable',
+                                                    );
+                                                  } else {
+                                                    ///暂停状态时
+                                                    if (controller.novelBean.value!
+                                                            .pauseStatus! ==
+                                                        1) {
+                                                      controller
+                                                          .continuePausedNovel(
+                                                        onSuccess: () {
+                                                          controller.gotoPage();
+                                                        },
+                                                      );
+                                                    } else {
                                                       controller.gotoPage();
-                                                    },
-                                                  );
-                                                } else {
-                                                  controller.gotoPage();
-                                                }
-                                              }
+                                                    }
+                                                  }
+                                                },
+                                              );
                                             },
-                                          );
-                                        },
-                                      ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                        );
-                },
+                            );
+                    },
+                  ),
+                ],
               ),
+              if (controller.source == NovelHomeSourceType.guide)
+                Positioned(
+                  right: 12.w,
+                  bottom: ByScreenUtils.bottomSafeHeight - 25.w,
+                  child: const FingerScaleAnimateView(),
+                )
             ],
           ),
         ),

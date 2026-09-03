@@ -2,7 +2,7 @@
  * @Author: cold-x
  * @Date: 2025-05-28 10:09:05
  * @LastEditors: duncy 474647591@qq.com
- * @LastEditTime: 2026-03-02 17:29:13
+ * @LastEditTime: 2026-06-08 17:04:59
  * @FilePath: /fastcreationmaster/lib/main.dart
  * @Description: 
  */
@@ -34,7 +34,7 @@ void main() async {
       BuildConfig.instantiate(
         envType: Environment.PRODUCTION,
         envConfig: EnvironmentConfig(),
-      channelType: ChannelType.headlines,
+      channelType: ChannelType.oppo,
       );
 
       WidgetsFlutterBinding.ensureInitialized();

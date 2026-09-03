@@ -1,8 +1,8 @@
 /*
  * @Author: cold-x
  * @Date: 2025-07-04 10:57:28
- * @LastEditors: cold-x 474647591@qq.com
- * @LastEditTime: 2025-09-04 17:23:59
+ * @LastEditors: duncy 474647591@qq.com
+ * @LastEditTime: 2026-06-08 15:50:46
  * @FilePath: /fastcreationmaster/Users/duncy/Desktop/BY/ByHyAppCommonUtils/byhy_app_common_utils/lib/app_http/channel.dart
  * @Description: 
  */

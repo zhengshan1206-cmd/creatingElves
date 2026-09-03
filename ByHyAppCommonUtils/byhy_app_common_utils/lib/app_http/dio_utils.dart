@@ -27,7 +27,6 @@ class UserAgentUtil {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = Platform.isIOS ? FkUserAgent.webViewUserAgent! : FkUserAgent.userAgent!;
-      print(platformVersion);
     } on PlatformException catch (e) {
       platformVersion = 'Failed to get platform version.';
     }
